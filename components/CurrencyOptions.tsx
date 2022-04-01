@@ -1,4 +1,4 @@
-import { traceDeprecation } from "process";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Currency } from "../types/currency.type";
 import Table from "./Table";
@@ -24,40 +24,41 @@ const CurrencyOptions = () => {
     max: 0,
   });
 
-  useEffect(() => {
-    fetch(
-      `https://api.coindesk.com/v1/bpi/currentprice/${
-        currency && currency.toLowerCase()
-      }.json`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setCurrentRate(data.bpi[currency].rate);
-      })
-      .catch((error) => {
-        if (error) setCurrentRate("not found");
+  const getCurrentRate = async () => {
+    try {
+      const response = await axios.get(
+        `https://api.coindesk.com/v1/bpi/currentprice/${currency.toLowerCase()}.json`
+      );
+      setCurrentRate(response.data.bpi[currency].rate);
+    } catch (error) {
+      setCurrentRate("not found");
+    }
+  };
+
+  const getPriorRate = async () => {
+    try {
+      const response = await axios.get(
+        `https://api.coindesk.com/v1/bpi/historical/close.json?start=${priorIsoDate}&end=${todayIsoDate}&currency=${currency.toLowerCase()}`
+      );
+      const arr: number[] = Object.values(response.data.bpi);
+      const min = Math.min(...arr);
+      const max = Math.max(...arr);
+      setMinMax({
+        min,
+        max,
       });
+    } catch (error) {
+      if (error) setMinMax({ min: 0, max: 0 });
+    }
+    return minMax;
+  };
+
+  useEffect(() => {
+    getCurrentRate();
   }, [currency]);
 
   useEffect(() => {
-    fetch(
-      `https://api.coindesk.com/v1/bpi/historical/close.json?start=${priorIsoDate}&end=${todayIsoDate}&currency=${
-        currency && currency.toLowerCase()
-      }`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        const arr: number[] = Object.values(data.bpi);
-        const min = Math.min(...arr);
-        const max = Math.max(...arr);
-        setMinMax({
-          min,
-          max,
-        });
-      })
-      .catch((error) => {
-        if (error) setMinMax({ min: 0, max: 0 });
-      });
+    getPriorRate();
   }, [currency]);
 
   return (

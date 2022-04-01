@@ -15,13 +15,17 @@ const Table = ({ currentRate, minMax }: ITable) => {
         style={{ borderCollapse: "collapse", border: "1px solid lightgray" }}
       >
         <thead>
-          <th style={{ border: "1px solid #dddddd" }}>Current Bitcoin Rate</th>
-          <th style={{ border: "1px solid #dddddd" }}>
-            Lowest Bitcoin Rate in 30 days
-          </th>
-          <th style={{ border: "1px solid #dddddd" }}>
-            Highest Bitcoin Rate in 30 days
-          </th>
+          <tr>
+            <th style={{ border: "1px solid #dddddd" }}>
+              Current Bitcoin Rate
+            </th>
+            <th style={{ border: "1px solid #dddddd" }}>
+              Lowest Bitcoin Rate in 30 days
+            </th>
+            <th style={{ border: "1px solid #dddddd" }}>
+              Highest Bitcoin Rate in 30 days
+            </th>
+          </tr>
         </thead>
         <tbody>
           <tr>
