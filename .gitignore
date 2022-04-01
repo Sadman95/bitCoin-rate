@@ -31,6 +31,5 @@ yarn-error.log*
 # vercel
 .vercel
 
-# folder_files
-/pages/api
+
 
